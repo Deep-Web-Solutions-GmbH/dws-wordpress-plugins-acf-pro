@@ -1,15 +1,16 @@
 <?php
 
 namespace Deep_Web_Solutions\Plugins\ACF;
-use Deep_Web_Solutions\Core\DWS_Functionality_Template;
+use Deep_Web_Solutions\Base\DWS_Functionality_Template;
+use Deep_Web_Solutions\Core\DWS_Loader;
 
 if (!defined('ABSPATH')) { exit; }
 
 /**
  * Handles the registering of options in the back-end of the website.
  *
- * @since   1.0.0
- * @version 1.0.0
+ * @since   2.0.0
+ * @version 2.0.0
  * @author  Antonius Cezar Hegyes <a.hegyes@deep-web-solutions.de>
  *
  * @see     DWS_Functionality_Template
@@ -18,15 +19,15 @@ final class ACF_Custom_Field_Types extends DWS_Functionality_Template {
 	//region INHERITED FUNCTIONS
 
 	/**
-	 * @since   1.0.0
-	 * @version 1.0.0
+	 * @since   2.0.0
+	 * @version 2.0.0
 	 *
 	 * @see     DWS_Functionality_Template::define_functionality_hooks()
 	 *
-	 * @param   \Deep_Web_Solutions\Core\DWS_WordPress_Loader   $loader
+	 * @param   DWS_Loader  $loader
 	 */
 	protected function define_functionality_hooks($loader) {
-		$loader->add_action('acf/include_field_types', $this, 'include_field_types');
+        $loader->add_action('acf/include_field_types', $this, 'include_field_types');
 	}
 
 	//endregion
@@ -36,8 +37,8 @@ final class ACF_Custom_Field_Types extends DWS_Functionality_Template {
 	/**
 	 * Loads the custom field types.
 	 *
-	 * @since   1.0.0
-	 * @version 1.0.0
+	 * @since   2.0.0
+	 * @version 2.0.0
 	 *
 	 * @param   int     $version    The major version of the ACF plugin.
 	 */

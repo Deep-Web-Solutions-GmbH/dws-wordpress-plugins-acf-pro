@@ -1,16 +1,17 @@
 <?php
 
 namespace Deep_Web_Solutions\Plugins\ACF;
-use Deep_Web_Solutions\Core\DWS_Functionality_Template;
-use Deep_Web_Solutions\Core\DWS_Permissions;
+use Deep_Web_Solutions\Base\DWS_Functionality_Template;
+use Deep_Web_Solutions\Core\DWS_Loader;
+use Deep_Web_Solutions\Helpers\DWS_Permissions;
 
 if (!defined('ABSPATH')) { exit; }
 
 /**
  * Handles customizations to the ACF fields and their functionalities.
  *
- * @since   1.0.0
- * @version 1.5.0
+ * @since   2.0.0
+ * @version 2.0.0
  * @author  Antonius Cezar Hegyes <a.hegyes@deep-web-solutions.de>
  *
  * @see     DWS_Functionality_Template
@@ -24,7 +25,7 @@ final class ACF_Customization extends DWS_Functionality_Template {
 	 *
 	 * @see     DWS_Functionality_Template::define_functionality_hooks()
 	 *
-	 * @param   \Deep_Web_Solutions\Core\DWS_WordPress_Loader 	$loader
+	 * @param   DWS_Loader  $loader
 	 */
 	protected function define_functionality_hooks($loader) {
 		$loader->add_filter('acf/update_value/type=date_time_picker', $this, 'acf_save_datetimepicker_as_unix_timestamp', 10, 3);
@@ -32,8 +33,6 @@ final class ACF_Customization extends DWS_Functionality_Template {
 		$loader->add_action('acf/render_field/type=select', $this, 'acf_add_dummy_hidden_fields_to_disabled_fields', PHP_INT_MAX);
 		$loader->add_action('acf/render_field/type=text', $this, 'acf_add_dummy_hidden_fields_to_disabled_fields', PHP_INT_MAX);
 		$loader->add_action('acf/render_field/type=textarea', $this, 'acf_add_dummy_hidden_fields_to_disabled_fields', PHP_INT_MAX);
-
-		$loader->add_filter('attachment_fields_to_edit', $this, 'maybe_remove_attachment_edit_fields', PHP_INT_MAX, 2);
 	}
 
 	//endregion
@@ -75,8 +74,8 @@ final class ACF_Customization extends DWS_Functionality_Template {
 	 * then output a hidden field such that the value does not get lost
 	 * when the page is updated.
 	 *
-     * @since   1.0.0
-     * @version 1.0.0
+     * @since   2.0.0
+     * @version 2.0.0
      *
 	 * @param   array   $field  ACF field in ACF format.
 	 */
@@ -108,29 +107,6 @@ final class ACF_Customization extends DWS_Functionality_Template {
 		<?php echo '</script>';
 	}
 
-	/**
-	 * Not everyone should be able to perform edits on the gallery fields.
-	 *
-     * @since   1.0.0
-     * @version 1.0.0
-     *
-	 * @param   array       $form_fields    The fields that can be used to edit the current image.
-	 * @param   \WP_Post    $post           The post of the media file.
-	 *
-	 * @return  array       The fields for the actions that the current user is entitled to carry out.
-	 */
-	public function maybe_remove_attachment_edit_fields($form_fields, $post) {
-		if (strpos(wp_get_raw_referer(), 'upload.php') !== false) {
-		    error_log("what");
-			return $form_fields;
-		}
-		$log = (DWS_Permissions::has(Permissions::CAN_EDIT_GALLERY_FIELD)) ? 'true' : 'false';
-
-		error_log($log);
-
-		return DWS_Permissions::has(Permissions::CAN_EDIT_GALLERY_FIELD) ? $form_fields : array();
-	}
-
 	//endregion
 
 	//region HELPERS
@@ -138,8 +114,8 @@ final class ACF_Customization extends DWS_Functionality_Template {
 	/**
 	 * Outputs some CSS to completely hide a certain field from the screen, only for humans.
 	 *
-     * @since   1.0.0
-     * @version 1.5.0
+     * @since   2.0.0
+     * @version 2.0.0
      *
      * @see     ACF_Fields::make_field_uneditable()
      *
@@ -150,8 +126,8 @@ final class ACF_Customization extends DWS_Functionality_Template {
 	 */
 	public static function css_hide_field($field, $do_on_ajax = false) {
 		/**
-		 * @since   1.0.0
-         * @version 1.0.0
+		 * @since   2.0.0
+         * @version 2.0.0
          *
          * @param   bool    $should_skip_css_hiding_field   Whether the current ACF field should not be CSS hidden.
          * @param   array   $field                          The current ACF field.
@@ -196,8 +172,8 @@ final class ACF_Customization extends DWS_Functionality_Template {
 	/**
 	 * Make a field uneditable.
 	 *
-     * @since   1.0.0
-     * @version 1.5.0
+     * @since   2.0.0
+     * @version 2.0.0
      *
 	 * @param   array   $field          ACF field in ACF format.
 	 * @param   bool    $do_on_ajax     True if the action should also be performed on AJAX requests, otherwise false.
@@ -206,8 +182,8 @@ final class ACF_Customization extends DWS_Functionality_Template {
 	 */
 	public static function make_field_uneditable($field, $do_on_ajax = false) {
 		/**
-		 * @since   1.0.0
-         * @version 1.0.0
+		 * @since   2.0.0
+         * @version 2.0.0
          *
          * @param   bool    $should_skip_making_field_uneditable    Whether the current ACF field should be kept editable or not.
          * @param   array   $field                                  The current ACF field.

@@ -3,7 +3,7 @@
   <component name="PhpIncludePathManager">
     <include_path>
       <path value="$USER_HOME$/Deep Web Solutions GmbH/Programming - WordPress Libraries/wordpress/wordpress_5.3.0" />
-      <path value="$PROJECT_DIR$/../dws-wordpress-core" />
+      <path value="$USER_HOME$/Deep Web Solutions GmbH/Programming - WordPress Libraries/mu-plugins/dws-core/dws-wordpress-core_2.0.0" />
       <path value="$USER_HOME$/Deep Web Solutions GmbH/Programming - WordPress Libraries/plugins/advanced-custom-fields/advanced-custom-fields-pro_5.8.7" />
     </include_path>
   </component>

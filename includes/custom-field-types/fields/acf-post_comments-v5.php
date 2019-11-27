@@ -8,8 +8,8 @@ if (!defined('ABSPATH')) { exit; }
 /**
  * A custom field type for adding back-end comments to a post.
  *
- * @since   1.0.0
- * @version 1.0.0
+ * @since   2.0.0
+ * @version 2.0.0
  * @author  Antonius Cezar Hegyes <a.hegyes@deep-web-solutions.de>
  *
  * @see     \acf_field
@@ -20,8 +20,8 @@ final class ACF_Field_Post_Comments extends \acf_field {
 	/**
 	 * ACF_Field_Post_Comments constructor.
 	 *
-	 * @since   1.0.0
-	 * @version 1.0.0
+	 * @since   2.0.0
+	 * @version 2.0.0
 	 *
 	 * @see     \acf_field::__construct()
 	 */

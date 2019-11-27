@@ -1,10 +1,11 @@
 <?php
 
 namespace Deep_Web_Solutions\Plugins\ACF;
-use Deep_Web_Solutions\Admin\DWS_Settings;
 use Deep_Web_Solutions\Admin\Settings\DWS_Adapter;
 use Deep_Web_Solutions\Admin\Settings\DWS_Adapter_Base;
 use Deep_Web_Solutions\Admin\Settings\DWS_Settings_Pages;
+use Deep_Web_Solutions\Core\DWS_Loader;
+use Deep_Web_Solutions\Plugins\ACF_Pro_Compatibility;
 
 if (!defined('ABSPATH')) { exit; }
 
@@ -46,11 +47,11 @@ final class DWS_ACFPro_Adapter extends DWS_Adapter_Base implements DWS_Adapter {
      *
      * @see     DWS_Functionality_Template::define_functionality_hooks()
      *
-     * @param   \Deep_Web_Solutions\Core\DWS_WordPress_Loader   $loader
+     * @param   DWS_Loader  $loader
      */
     protected function define_functionality_hooks($loader) {
         parent::define_functionality_hooks($loader);
-        $loader->add_action(self::get_hook_name('init'), $this, 'add_floating_update_button', PHP_INT_MAX - 100);
+        $loader->add_action('init', $this, 'add_floating_update_button', PHP_INT_MAX - 100);
     }
 
     /**
@@ -129,7 +130,7 @@ final class DWS_ACFPro_Adapter extends DWS_Adapter_Base implements DWS_Adapter {
      * @param   string  $location
      * @param   array   $other
      */
-    public static function register_options_page_group($key, $title, $location, $other = array()) {
+    public static function register_settings_page_group($key, $title, $location, $other = array()) {
         if (!function_exists('acf_add_local_field_group')) { return; }
 
         $key = strpos($key, 'group_') === 0 ? $key : self::GROUP_KEY_PREFIX . $key; // Must begin with 'group_'
@@ -146,15 +147,8 @@ final class DWS_ACFPro_Adapter extends DWS_Adapter_Base implements DWS_Adapter {
                         'value'     => $location
                     ),
                 ),
-            ),
-            'menu_order'            => 0,
-            'position'              => 'normal', // Choices of 'acf_after_title', 'normal' or 'side'
-            'style'                 => 'default', // Choices of 'default' or 'seamless'
-            'label_placement'       => 'top', // Choices of 'top' (Above fields) or 'left' (Beside fields)
-            'instruction_placement' => 'label', // Choices of 'label' (Below labels) or 'field' (Below fields)
-            'hide_on_screen'        => ''
+            )
         ));
-
         acf_add_local_field_group($args);
     }
 
@@ -168,7 +162,7 @@ final class DWS_ACFPro_Adapter extends DWS_Adapter_Base implements DWS_Adapter {
      * @param   array               $parameters
      * @param   string              $location
      */
-    public static function register_options_group_field($group_id, $key, $type, $parameters, $location = null){
+    public static function register_settings_group_field($group_id, $key, $type, $parameters, $location = null){
         if (!function_exists('acf_add_local_field')) { return; }
 
         $group_id = (strpos($group_id, 'field_') === 0 || strpos($group_id, 'group_') === 0)
@@ -192,22 +186,41 @@ final class DWS_ACFPro_Adapter extends DWS_Adapter_Base implements DWS_Adapter {
      */
     public static function register_settings_field($key, $type, $parent_id, $parameters, $location = null) {
         if (!function_exists('acf_add_local_field')) { return; }
-
         acf_add_local_field(self::formatting_settings_field($key, $type, $parent_id, $parameters));
     }
 
     /**
+     * @since   2.0.0
+     * @version 2.0.0
+     *
      * @param   string  $field
      * @param   string  $option_page_slug
      *
      * @return  mixed   Option value.
-     *@version 2.0.0
-     *
-     * @since   2.0.0
      */
-    public static function get_options_field_value($field, $option_page_slug = null) {
+    public static function get_settings_field_value($field, $option_page_slug = null) {
+        if (function_exists('get_field') && did_action('acf/init')) {
+            return get_field($field, 'option');
+        } else {
+            global $wpdb;
+            $row = $wpdb->get_row( $wpdb->prepare( "SELECT option_name FROM $wpdb->options WHERE option_value = %s LIMIT 1", $field ) );
+
+            return  get_option(substr($row->option_name, 1), '');
+        }
+    }
+
+    /**
+     * @since   2.0.0
+     * @version 2.0.0
+     *
+     * @param   string      $field
+     * @param   false|int   $post_id
+     *
+     * @return  mixed   Option value.
+     */
+    public static function get_field_value($field, $post_id = false) {
         if (!function_exists('get_field')) { return null; }
-        return get_field($field, 'option');
+        return get_field($field, $post_id);
     }
 
     //endregion
@@ -224,8 +237,8 @@ final class DWS_ACFPro_Adapter extends DWS_Adapter_Base implements DWS_Adapter {
      */
     public function add_floating_update_button(){
         if (isset($_REQUEST['page']) && strpos($_REQUEST['page'], DWS_Settings_Pages::MENU_PAGES_SLUG_PREFIX) === 0) {
-            wp_enqueue_style( DWS_Settings_Pages::get_asset_handle('floating-button-style'), DWS_Settings::get_assets_base_path( true ) . 'style.css', array(), DWS_Settings_Pages::get_plugin_version(), 'all' );
-            wp_enqueue_script(DWS_Settings_Pages::get_asset_handle('floating-button'), DWS_Settings::get_assets_base_path( true ) . 'floating-update-button.js', array( 'jquery' ), DWS_Settings_Pages::get_plugin_version(), true);
+            wp_enqueue_style( DWS_Settings_Pages::get_asset_handle('floating-button-style'), ACF_Pro_Compatibility::get_assets_base_path(true) . 'style.css', array(), ACF_Pro_Compatibility::get_plugin_version(), 'all' );
+            wp_enqueue_script(DWS_Settings_Pages::get_asset_handle('floating-button'), ACF_Pro_Compatibility::get_assets_base_path(true) . 'floating-update-button.js', array( 'jquery' ), ACF_Pro_Compatibility::get_plugin_version(), true);
         }
     }
 
@@ -245,7 +258,7 @@ final class DWS_ACFPro_Adapter extends DWS_Adapter_Base implements DWS_Adapter {
      * @return  array   Formatted array for registering generic ACF field
      */
     private static function formatting_settings_field($key, $type, $location_id, $parameters) {
-        $key = strpos($key, 'field_') === 0 ? $key : self::FIELD_KEY_PREFIX . $key; // Must begin with 'field_'
+        $key = strpos($key, 'field_') === 0 ? $key : (self::FIELD_KEY_PREFIX . $key); // Must begin with 'field_'
         $parameters['key'] = $key;
 
         return wp_parse_args($parameters, array(
