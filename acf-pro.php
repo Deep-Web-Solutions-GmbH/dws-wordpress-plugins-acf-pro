@@ -15,7 +15,7 @@ if (!defined('ABSPATH')) { exit; }
  * @wordpress-plugin
  * Plugin Name:         DeepWebSolutions ACF Pro Compatibility
  * Description:         This plugin handles all the core custom extensions to the 'ACF Pro' plugin.
- * Version:             2.0.0
+ * Version:             2.0.1
  * Author:              Deep Web Solutions GmbH
  * Author URI:          https://www.deep-web-solutions.de
  * License:             GPL-3.0+
