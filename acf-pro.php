@@ -60,7 +60,7 @@ final class ACF_Pro_Compatibility extends DWS_Functionality_Template {
         ACF\ACF_Custom_Field_Types::maybe_initialize_singleton('h478gh8g2113');
 
         /** @noinspection PhpIncludeInspection */
-        /** Provides enhancements to WC payment methods. */
+        /** The ACF Pro Adapter. */
         require_once(self::get_includes_base_path() . 'class-acf-settings-adapter.php');
         ACF\DWS_ACFPro_Adapter::maybe_initialize_singleton('rgfjn87uy4578yhbf67', true, self::get_root_id());
     }
