@@ -230,6 +230,27 @@ final class DWS_ACFPro_Adapter extends DWS_Adapter_Base implements DWS_Adapter {
     }
 
     /**
+     * @since   2.0.2
+     * @version 2.0.2
+     *
+     * @param   string      $field
+     * @param   mixed       $new_value
+     * @param   string      $option_page_slug
+     *
+     * @return  bool        True on successful update, false on failure.
+     */
+    public static function update_settings_field_value($field, $new_value, $option_page_slug = null){
+        if (function_exists('update_field') && did_action('acf/init')) {
+            return update_field($field, $new_value, 'option');
+        } else {
+            global $wpdb;
+            $row = $wpdb->get_row( $wpdb->prepare( "SELECT option_name FROM $wpdb->options WHERE option_value = %s LIMIT 1", $field ) );
+
+            return  update_option(substr($row->option_name, 1), $new_value);
+        }
+    }
+
+    /**
      * @since   2.0.0
      * @version 2.0.0
      *
@@ -241,6 +262,21 @@ final class DWS_ACFPro_Adapter extends DWS_Adapter_Base implements DWS_Adapter {
     public static function get_field_value($field, $post_id = false) {
         if (!function_exists('get_field')) { return null; }
         return get_field($field, $post_id);
+    }
+
+    /**
+     * @since   2.0.2
+     * @version 2.0.2
+     *
+     * @param   string      $field
+     * @param   mixed       $new_value
+     * @param   int|false   $post_id
+     *
+     * @return  bool        True on successful update, false on failure.
+     */
+    public static function update_field_value($field, $new_value, $post_id = false){
+        if (!function_exists('update_field')) { return false; }
+        return update_field($field, $new_value, $post_id);
     }
 
     /**
