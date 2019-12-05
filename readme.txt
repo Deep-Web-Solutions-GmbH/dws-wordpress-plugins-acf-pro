@@ -3,11 +3,14 @@ Contributors: Fatine Tazi, Antonius Hegyes
 Requires at least: 5.3
 Tested up to: 5.3
 Requires PHP: 7.3
-Stable tag: 2.0.1
+Stable tag: 2.0.2
 License: GPLv3 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
 === Changelog ===
+
+= 2.0.2 =
+* Compatibility with DWS Core 2.0.3
 
 = 2.0.1 =
 * Added interface method to add groups in other places too.
