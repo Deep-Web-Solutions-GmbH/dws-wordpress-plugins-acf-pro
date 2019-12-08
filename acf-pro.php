@@ -9,7 +9,7 @@ if (!defined('ABSPATH')) { exit; }
  * Adapter for the ACF Pro plugin.
  *
  * @since   2.0.0
- * @version 2.0.0
+ * @version 2.0.4
  * @author  Fatine Tazi <f.tazi@deep-web-solutions.de>
  *
  * @wordpress-plugin
@@ -39,6 +39,18 @@ final class ACF_Pro_Compatibility extends DWS_Functionality_Template {
     }
 
     /**
+     * @since   2.0.4
+     * @version 2.0.4
+     *
+     * @see     DWS_Functionality_Template::define_functionality_hooks()
+     *
+     * @param   \Deep_Web_Solutions\Core\DWS_Loader     $loader
+     */
+    protected function define_functionality_hooks($loader) {
+        $loader->add_action('init', $this, 'delay_acf_init', PHP_INT_MIN);
+    }
+
+    /**
      * @since   2.0.0
      * @version 2.0.0
      *
@@ -63,6 +75,22 @@ final class ACF_Pro_Compatibility extends DWS_Functionality_Template {
         /** The ACF Pro Adapter. */
         require_once(self::get_includes_base_path() . 'class-acf-settings-adapter.php');
         ACF\DWS_ACFPro_Adapter::maybe_initialize_singleton('rgfjn87uy4578yhbf67', true, self::get_root_id());
+    }
+
+    //endregion
+
+    //region COMPATIBILITY LOGIC
+
+    /**
+     * Some plugins also init on 5, like WC, which causes their functions not to be usable yet. This causes ACF's
+     * init to happen on 8, making sure those plugins are loaded first.
+     *
+     * @since   2.0.4
+     * @version 2.0.4
+     */
+    public function delay_acf_init() {
+        remove_action('init', array(acf(), 'init'), 5);
+        add_action('init', array(acf(), 'init'), 8);
     }
 
     //endregion

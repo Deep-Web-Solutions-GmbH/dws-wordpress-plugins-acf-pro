@@ -11,6 +11,7 @@ License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
 = 2.0.4 =
 * More init settings.
+* Delayed the init of ACF.
 
 = 2.0.3 =
 * Bug fix for functionality templates
