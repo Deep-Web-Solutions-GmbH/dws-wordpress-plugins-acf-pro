@@ -13,7 +13,7 @@ if (!defined('ABSPATH')) { exit; }
  * Settings adapter for the ACF Pro plugin.
  *
  * @since   2.0.0
- * @version 2.0.3
+ * @version 2.0.4
  * @author  Fatine Tazi <f.tazi@deep-web-solutions.de>
  *
  * @see     DWS_Adapter_Base
@@ -57,13 +57,14 @@ final class DWS_ACFPro_Adapter extends DWS_Adapter_Base implements DWS_Adapter {
 
     /**
      * @since   2.0.0
-     * @version 2.0.3
+     * @version 2.0.4
      *
      * @see     DWS_Adapter_Base::set_framework_slug()
      */
     public function set_fields() {
         $this->framework_slug = 'acf-pro';
         $this->init_hook = 'acf/include_fields';
+        $this->update_field_hook = 'acf/update_value';
     }
 
     //endregion
