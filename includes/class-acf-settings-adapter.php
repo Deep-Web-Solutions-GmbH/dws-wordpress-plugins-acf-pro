@@ -13,7 +13,7 @@ if (!defined('ABSPATH')) { exit; }
  * Settings adapter for the ACF Pro plugin.
  *
  * @since   2.0.0
- * @version 2.0.2
+ * @version 2.0.3
  * @author  Fatine Tazi <f.tazi@deep-web-solutions.de>
  *
  * @see     DWS_Adapter_Base
@@ -57,13 +57,13 @@ final class DWS_ACFPro_Adapter extends DWS_Adapter_Base implements DWS_Adapter {
 
     /**
      * @since   2.0.0
-     * @version 2.0.0
+     * @version 2.0.3
      *
      * @see     DWS_Adapter_Base::set_framework_slug()
      */
     public function set_fields() {
         $this->framework_slug = 'acf-pro';
-        $this->init_hook = 'acf/init';
+        $this->init_hook = 'acf/include_fields';
     }
 
     //endregion
@@ -174,7 +174,7 @@ final class DWS_ACFPro_Adapter extends DWS_Adapter_Base implements DWS_Adapter {
 
     /**
      * @since   2.0.0
-     * @version 2.0.0
+     * @version 2.0.3
      *
      * @param   string              $group_id
      * @param   string              $key
@@ -185,18 +185,17 @@ final class DWS_ACFPro_Adapter extends DWS_Adapter_Base implements DWS_Adapter {
     public static function register_field_to_group($group_id, $key, $type, $parameters, $location = null) {
         if (!function_exists('acf_add_local_field')) { return; }
 
-        $group_id = (strpos($group_id, 'field_') === 0 || strpos($group_id, 'group_') === 0)
+        $group_id = (strpos($group_id, self::FIELD_KEY_PREFIX) === 0 || strpos($group_id, self::GROUP_KEY_PREFIX) === 0)
             ? $group_id
             : (self::GROUP_KEY_PREFIX . $group_id);
-
         $parameters['parent'] = $group_id;
 
-        acf_add_local_field(self::formatting_settings_field($key, $type, $group_id, $parameters));
+        acf_add_local_field(self::format_field($key, $type, $group_id, $parameters));
     }
 
     /**
      * @since   2.0.0
-     * @version 2.0.0
+     * @version 2.0.3
      *
      * @param   string  $key
      * @param   string  $type
@@ -206,7 +205,13 @@ final class DWS_ACFPro_Adapter extends DWS_Adapter_Base implements DWS_Adapter {
      */
     public static function register_field($key, $type, $parent_id, $parameters, $location = null) {
         if (!function_exists('acf_add_local_field')) { return; }
-        acf_add_local_field(self::formatting_settings_field($key, $type, $parent_id, $parameters));
+
+        $parent_id = (strpos($parent_id, self::GROUP_KEY_PREFIX) === 0)
+            ? $parent_id
+            : (self::GROUP_KEY_PREFIX . $parent_id);
+        $parameters['parent'] = $parent_id;
+
+        acf_add_local_field(self::format_field($key, $type, $parent_id, $parameters));
     }
 
     /**
@@ -508,7 +513,7 @@ final class DWS_ACFPro_Adapter extends DWS_Adapter_Base implements DWS_Adapter {
 
     /**
      * @since   2.0.0
-     * @version 2.0.0
+     * @version 2.0.3
      *
      * @param   string  $location_id
      * @param   string  $key
@@ -517,8 +522,8 @@ final class DWS_ACFPro_Adapter extends DWS_Adapter_Base implements DWS_Adapter {
      *
      * @return  array   Formatted array for registering generic ACF field
      */
-    private static function formatting_settings_field($key, $type, $location_id, $parameters) {
-        $key = strpos($key, 'field_') === 0 ? $key : (self::FIELD_KEY_PREFIX . $key); // Must begin with 'field_'
+    private static function format_field($key, $type, $location_id, $parameters) {
+        $key = strpos($key, self::FIELD_KEY_PREFIX) === 0 ? $key : (self::FIELD_KEY_PREFIX . $key); // must begin with 'field_'
         $parameters['key'] = $key;
 
         return wp_parse_args($parameters, array(
