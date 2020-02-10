@@ -13,7 +13,7 @@ if (!defined('ABSPATH')) { exit; }
  * Settings adapter for the ACF Pro plugin.
  *
  * @since   2.0.0
- * @version 2.0.5
+ * @version 2.0.6
  * @author  Fatine Tazi <f.tazi@deep-web-solutions.de>
  *
  * @see     DWS_Adapter_Base
@@ -41,19 +41,6 @@ final class DWS_ACFPro_Adapter extends DWS_Adapter_Base implements DWS_Adapter {
     //endregion
 
     //region CLASS INHERITED FUNCTIONS
-
-    /**
-     * @since   2.0.0
-     * @version 2.0.0
-     *
-     * @see     DWS_Functionality_Template::define_functionality_hooks()
-     *
-     * @param   DWS_Loader  $loader
-     */
-    protected function define_functionality_hooks($loader) {
-        parent::define_functionality_hooks($loader);
-        $loader->add_action('init', $this, 'add_floating_update_button', PHP_INT_MAX - 100);
-    }
 
     /**
      * @since   2.0.0
@@ -305,7 +292,7 @@ final class DWS_ACFPro_Adapter extends DWS_Adapter_Base implements DWS_Adapter {
      * Outputs some CSS to completely hide a certain field from the screen, only for humans.
      *
      * @since   2.0.2
-     * @version 2.0.2
+     * @version 2.0.6
      *
      * @see     DWS_ACFPro_Adapter::make_field_uneditable()
      *
@@ -315,31 +302,17 @@ final class DWS_ACFPro_Adapter extends DWS_Adapter_Base implements DWS_Adapter {
      * @return  array   The ACF field given as input but with modified values such that it becomes uneditable.
      */
     public static function css_hide_field($field, $do_on_ajax = false) {
-        /**
-         * @since   2.0.2
-         * @version 2.0.2
-         *
-         * @param   bool    $should_skip_css_hiding_field   Whether the current ACF field should not be CSS hidden.
-         * @param   array   $field                          The current ACF field.
-         */
-        if (apply_filters(parent::get_hook_name('skip-css-hiding-field'), false, $field)) {
-            return $field;
-        }
-        if ((wp_doing_ajax() && !$do_on_ajax) || !is_admin()) {
-            return $field;
-        }
-
         if (wp_doing_ajax()) {
             echo '<style type="text/css">'; ?>
             [data-name='<?php echo $field['name']; ?>'] {
-            display: none !important;
+                display: none !important;
             }
             <?php echo '</style>';
         } else {
             add_action('admin_head', function() use ($field) {
                 echo '<style type="text/css">'; ?>
                 [data-name='<?php echo $field['name']; ?>'] {
-                display: none !important;
+                    display: none !important;
                 }
                 <?php echo '</style>';
             }, 100);
@@ -378,12 +351,7 @@ final class DWS_ACFPro_Adapter extends DWS_Adapter_Base implements DWS_Adapter {
          * @param   bool    $should_skip_making_field_uneditable    Whether the current ACF field should be kept editable or not.
          * @param   array   $field                                  The current ACF field.
          */
-        if (apply_filters(parent::get_hook_name('skip-making-field-uneditable'), false, $field)) {
-            return $field;
-        }
-        if ((wp_doing_ajax() && !$do_on_ajax) || !is_admin()) {
-            return $field;
-        }
+
 
         $field['class'] = isset($field['class']) ? $field['class'] . ' acf-disabled' : 'acf-disabled';
         switch ($field['type']) {
@@ -397,7 +365,7 @@ final class DWS_ACFPro_Adapter extends DWS_Adapter_Base implements DWS_Adapter {
                     echo '<style type="text/css">'; ?>
                     [data-key="<?php echo $field['key']; ?>"] .acf-actions,
                     [data-key="<?php echo $field['key']; ?>"] .acf-row-handle {
-                    display: none;
+                        display: none;
                     }
                     <?php echo '</style>';
                 } else {
@@ -405,7 +373,7 @@ final class DWS_ACFPro_Adapter extends DWS_Adapter_Base implements DWS_Adapter {
                         echo '<style type="text/css">'; ?>
                         [data-key="<?php echo $field['key']; ?>"] .acf-actions,
                         [data-key="<?php echo $field['key']; ?>"] .acf-row-handle {
-                        display: none;
+                            display: none;
                         }
                         <?php echo '</style>';
                     }, 100);
@@ -415,7 +383,7 @@ final class DWS_ACFPro_Adapter extends DWS_Adapter_Base implements DWS_Adapter {
                 if (wp_doing_ajax()) {
                     echo '<script type="text/javascript">'; ?>
                     function dws_defer_<?php echo $field['key']; ?>() {
-                    jQuery('[data-key="<?php echo $field['key']; ?>"] input').on('click', function(e) { e.preventDefault(); });
+                        jQuery('[data-key="<?php echo $field['key']; ?>"] input').on('click', function(e) { e.preventDefault(); });
                     }
 
                     dws_defer_until_jquery(dws_defer_<?php echo $field['key']; ?>);
@@ -424,7 +392,7 @@ final class DWS_ACFPro_Adapter extends DWS_Adapter_Base implements DWS_Adapter {
                     add_action('admin_head', function() use ($field) {
                         echo '<script type="text/javascript">'; ?>
                         function dws_defer_<?php echo $field['key']; ?>() {
-                        jQuery('[data-key="<?php echo $field['key']; ?>"] input').on('click', function(e) { e.preventDefault(); });
+                            jQuery('[data-key="<?php echo $field['key']; ?>"] input').on('click', function(e) { e.preventDefault(); });
                         }
 
                         dws_defer_until_jquery(dws_defer_<?php echo $field['key']; ?>);
@@ -437,11 +405,11 @@ final class DWS_ACFPro_Adapter extends DWS_Adapter_Base implements DWS_Adapter {
                     echo '<script type="text/javascript">'; ?>
                     function dws_defer_<?php echo $field['key']; ?>() {
                     function disable_<?php echo $field['key']; ?>() {
-                    jQuery('div[data-key="<?php echo $field['key']; ?>"] input.input').attr('disabled', 'disabled');
+                        jQuery('div[data-key="<?php echo $field['key']; ?>"] input.input').attr('disabled', 'disabled');
                     }
 
                     disable_<?php echo $field['key'];?>();
-                    jQuery(document).on('change', function() { disable_<?php echo $field['key'];?>(); });
+                        jQuery(document).on('change', function() { disable_<?php echo $field['key'];?>(); });
                     }
 
                     dws_defer_until_jquery(dws_defer_<?php echo $field['key']; ?>);
@@ -451,11 +419,11 @@ final class DWS_ACFPro_Adapter extends DWS_Adapter_Base implements DWS_Adapter {
                         echo '<script type="text/javascript">'; ?>
                         function dws_defer_<?php echo $field['key']; ?>() {
                         function disable_<?php echo $field['key']; ?>() {
-                        jQuery('div[data-key="<?php echo $field['key']; ?>"] input.input').attr('disabled', 'disabled');
+                            jQuery('div[data-key="<?php echo $field['key']; ?>"] input.input').attr('disabled', 'disabled');
                         }
 
                         disable_<?php echo $field['key'];?>();
-                        jQuery(document).on('change', function() { disable_<?php echo $field['key'];?>(); });
+                            jQuery(document).on('change', function() { disable_<?php echo $field['key'];?>(); });
                         }
 
                         dws_defer_until_jquery(dws_defer_<?php echo $field['key']; ?>);
@@ -468,7 +436,7 @@ final class DWS_ACFPro_Adapter extends DWS_Adapter_Base implements DWS_Adapter {
                     echo '<style type="text/css">'; ?>
                     [data-key="<?php echo $field['key']; ?>"] .acf-gallery-main .acf-gallery-toolbar,
                     [data-key="<?php echo $field['key']; ?>"] .actions {
-                    display: none !important;
+                        display: none !important;
                     }
                     <?php echo '</style>';
                 } else {
@@ -476,7 +444,7 @@ final class DWS_ACFPro_Adapter extends DWS_Adapter_Base implements DWS_Adapter {
                         echo '<style type="text/css">'; ?>
                         [data-key="<?php echo $field['key']; ?>"] .acf-gallery-main .acf-gallery-toolbar,
                         [data-key="<?php echo $field['key']; ?>"] .actions {
-                        display: none !important;
+                            display: none !important;
                         }
                         <?php echo '</style>';
                     }, 100);
@@ -491,25 +459,6 @@ final class DWS_ACFPro_Adapter extends DWS_Adapter_Base implements DWS_Adapter {
         }
 
         return $field;
-    }
-
-    //endregion
-
-    //region COMPATIBILITY LOGIC
-
-    /**
-     * If the current page is the General Settings in DWS Custom Extensions then enqueue some scripts.
-     *
-     * @author  Dushan Terzikj  <d.terzikj@deep-web-solutions.de>
-     *
-     * @since   1.3.3
-     * @version 2.0.0
-     */
-    public function add_floating_update_button(){
-        if (isset($_REQUEST['page']) && strpos($_REQUEST['page'], DWS_Settings_Pages::MENU_PAGES_SLUG_PREFIX) === 0) {
-            wp_enqueue_style( DWS_Settings_Pages::get_asset_handle('floating-button-style'), ACF_Pro_Compatibility::get_assets_base_path(true) . 'style.css', array(), ACF_Pro_Compatibility::get_plugin_version(), 'all' );
-            wp_enqueue_script(DWS_Settings_Pages::get_asset_handle('floating-button'), ACF_Pro_Compatibility::get_assets_base_path(true) . 'floating-update-button.js', array( 'jquery' ), ACF_Pro_Compatibility::get_plugin_version(), true);
-        }
     }
 
     //endregion

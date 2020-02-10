@@ -3,11 +3,14 @@ Contributors: Fatine Tazi, Antonius Hegyes
 Requires at least: 5.3
 Tested up to: 5.3
 Requires PHP: 7.3
-Stable tag: 2.0.5
+Stable tag: 2.0.6
 License: GPLv3 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
 === Changelog ===
+
+= 2.0.6 =
+* Moved some filters to the core
 
 = 2.0.5 =
 * Bug-fix for nested groups
