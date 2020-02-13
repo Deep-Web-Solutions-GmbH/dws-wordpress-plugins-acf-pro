@@ -10,7 +10,7 @@ if (!defined('ABSPATH')) { exit; }
  * Handles customizations to the ACF fields and their functionalities.
  *
  * @since   2.0.0
- * @version 2.0.2
+ * @version 2.0.7
  * @author  Antonius Cezar Hegyes <a.hegyes@deep-web-solutions.de>
  *
  * @see     DWS_Functionality_Template
@@ -20,7 +20,7 @@ final class ACF_Customization extends DWS_Functionality_Template {
 
 	/**
 	 * @since   1.0.0
-	 * @version 1.0.0
+	 * @version 2.0.7
 	 *
 	 * @see     DWS_Functionality_Template::define_functionality_hooks()
 	 *
@@ -30,7 +30,8 @@ final class ACF_Customization extends DWS_Functionality_Template {
 		$loader->add_filter('acf/update_value/type=date_time_picker', $this, 'acf_save_datetimepicker_as_unix_timestamp', 10, 3);
 
 		$loader->add_action('acf/render_field/type=select', $this, 'acf_add_dummy_hidden_fields_to_disabled_fields', PHP_INT_MAX);
-		$loader->add_action('acf/render_field/type=text', $this, 'acf_add_dummy_hidden_fields_to_disabled_fields', PHP_INT_MAX);
+        $loader->add_action('acf/render_field/type=number', $this, 'acf_add_dummy_hidden_fields_to_disabled_fields', PHP_INT_MAX);
+        $loader->add_action('acf/render_field/type=text', $this, 'acf_add_dummy_hidden_fields_to_disabled_fields', PHP_INT_MAX);
 		$loader->add_action('acf/render_field/type=textarea', $this, 'acf_add_dummy_hidden_fields_to_disabled_fields', PHP_INT_MAX);
 	}
 
@@ -74,7 +75,7 @@ final class ACF_Customization extends DWS_Functionality_Template {
 	 * when the page is updated.
 	 *
      * @since   2.0.0
-     * @version 2.0.0
+     * @version 2.0.7
      *
 	 * @param   array   $field  ACF field in ACF format.
 	 */
