@@ -3,9 +3,6 @@
 namespace Deep_Web_Solutions\Plugins\ACF;
 use Deep_Web_Solutions\Admin\Settings\DWS_Adapter;
 use Deep_Web_Solutions\Admin\Settings\DWS_Adapter_Base;
-use Deep_Web_Solutions\Admin\Settings\DWS_Settings_Pages;
-use Deep_Web_Solutions\Core\DWS_Loader;
-use Deep_Web_Solutions\Plugins\ACF_Pro_Compatibility;
 
 if (!defined('ABSPATH')) { exit; }
 
@@ -13,7 +10,7 @@ if (!defined('ABSPATH')) { exit; }
  * Settings adapter for the ACF Pro plugin.
  *
  * @since   2.0.0
- * @version 2.0.6
+ * @version 2.0.8
  * @author  Fatine Tazi <f.tazi@deep-web-solutions.de>
  *
  * @see     DWS_Adapter_Base
@@ -220,7 +217,7 @@ final class DWS_ACFPro_Adapter extends DWS_Adapter_Base implements DWS_Adapter {
 
     /**
      * @since   2.0.0
-     * @version 2.0.0
+     * @version 2.0.8
      *
      * @param   string  $field
      * @param   string  $option_page_slug
@@ -234,13 +231,15 @@ final class DWS_ACFPro_Adapter extends DWS_Adapter_Base implements DWS_Adapter {
             global $wpdb;
             $row = $wpdb->get_row( $wpdb->prepare( "SELECT option_name FROM $wpdb->options WHERE option_value = %s LIMIT 1", $field ) );
 
-            return  get_option(substr($row->option_name, 1), '');
+            return !empty($row) && property_exists($row, 'option_name')
+                ? get_option(substr($row->option_name, 1), '')
+                : '';
         }
     }
 
     /**
      * @since   2.0.2
-     * @version 2.0.2
+     * @version 2.0.8
      *
      * @param   string      $field
      * @param   mixed       $new_value
@@ -255,7 +254,9 @@ final class DWS_ACFPro_Adapter extends DWS_Adapter_Base implements DWS_Adapter {
             global $wpdb;
             $row = $wpdb->get_row( $wpdb->prepare( "SELECT option_name FROM $wpdb->options WHERE option_value = %s LIMIT 1", $field ) );
 
-            return  update_option(substr($row->option_name, 1), $new_value);
+            return !empty($row) && property_exists($row, 'option_name')
+                ? update_option(substr($row->option_name, 1), $new_value)
+                : false;
         }
     }
 
