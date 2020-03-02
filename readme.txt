@@ -9,6 +9,9 @@ License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
 === Changelog ===
 
+= 2.0.9 =
+* Extra checks for the ACF timestamp conversion
+
 = 2.0.8 =
 * Check if property exists
 

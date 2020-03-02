@@ -10,7 +10,7 @@ if (!defined('ABSPATH')) { exit; }
  * Handles customizations to the ACF fields and their functionalities.
  *
  * @since   2.0.0
- * @version 2.0.7
+ * @version 2.0.9
  * @author  Antonius Cezar Hegyes <a.hegyes@deep-web-solutions.de>
  *
  * @see     DWS_Functionality_Template
@@ -43,7 +43,7 @@ final class ACF_Customization extends DWS_Functionality_Template {
 	 * For best compatibility, it's best if we save the DateTimePicker values as UNIX timestamps.
 	 *
      * @since   1.0.0
-     * @version 1.2.1
+     * @version 2.0.9
      *
 	 * @param   string      $value      The current value of the DateTimePicker.
 	 * @param   int         $post_id    The ID of the post on which the DateTimePicker is registered.
@@ -52,7 +52,7 @@ final class ACF_Customization extends DWS_Functionality_Template {
 	 * @return  string|int  Either the original value or the UNIX timestamp thereof if conversion succeeded.
 	 */
 	public function acf_save_datetimepicker_as_unix_timestamp($value, $post_id, $field) {
-		if (empty($value)) {
+		if (empty($value) || is_numeric($value)) {
 			return $value;
 		}
 
